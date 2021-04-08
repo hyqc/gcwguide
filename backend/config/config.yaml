@@ -1,0 +1,7 @@
+server:
+  name: gcwguide
+  port: :8888
+store:
+  drive: file
+  type: json
+  path: store/websites
