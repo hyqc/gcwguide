@@ -6,5 +6,11 @@ import (
 )
 
 func Router(r *gin.Engine) {
-	r.GET("/", api.WebSiteList)
+	websites := r.Group("/websites")
+	{
+		websites.POST("/list", api.WebSiteList)
+		websites.POST("/add", api.WebSiteAdd)
+		websites.POST("/update", api.WebSiteUpdate)
+		websites.POST("/delete", api.WebSiteDelete)
+	}
 }

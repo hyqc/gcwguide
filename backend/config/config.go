@@ -14,16 +14,26 @@ type Config struct {
 
 // App application config
 type Server struct {
-	Name string `yaml:"name"`
-	Port string `yaml:"port"`
+	Name    string        `yaml:"name"`
+	Port    string        `yaml:"port"`
 }
 
 // Store store config
 type Store struct {
-	Drive string `yaml:"drive"`
-	Type  string `yaml:"type"`
-	Path  string `yaml:"path"`
+	Drive      string `yaml:"drive"`
+	Type       string `yaml:"type"`
+	Path       string `yaml:"path"`
+	Suffix     string `yaml:"suffix"`
+	BackupsDir string `json:"backups_dir"`
+	BackupsMax int    `json:"backups_max"`
+	FileSync   *util.FileSync
 }
+
+var App Config
+
+const (
+	StoreDriveFile = "file"
+)
 
 func InitConfig() (*Config, error) {
 	config, err := util.ParseYaml("config/config.yaml")
@@ -36,5 +46,27 @@ func InitConfig() (*Config, error) {
 		errMsg := errors.New("parse config []byte to struct error ：" + err.Error())
 		return nil, errMsg
 	}
+	if err := c.initStoreDrive(); err != nil {
+		return &c, nil
+	}
 	return &c, nil
+}
+
+// initStoreDrive 初始化存储驱动
+func (c *Config) initStoreDrive() (err error) {
+	switch c.Store.Drive {
+	case StoreDriveFile:
+		fallthrough
+	default:
+		fileSync := util.FileSync{}
+		fileSync.FilePath = c.Store.Path
+		if err = fileSync.InitStoreFile(c.Store.Path, 0755); err != nil {
+			return err
+		}
+		c.Store.FileSync = &fileSync
+		if c.Store.BackupsMax <= 7 {
+			c.Store.BackupsMax = 7
+		}
+	}
+	return nil
 }

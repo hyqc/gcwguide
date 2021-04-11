@@ -67,3 +67,23 @@ func CreateUniqueID(prefix string) string {
 	str := CreateMD5(prefix+CreateRandom(32, true, true), true)
 	return CreateMD5(str, true)
 }
+
+// UintInArray 数组中是否存在该该值
+func UintInArray(id uint, arr []uint) bool {
+	for _, val := range arr {
+		if id == val {
+			return true
+		}
+	}
+	return false
+}
+
+// StringInArray 数组中是否存在该该值
+func StringInArray(id string, arr []string) bool {
+	for _, val := range arr {
+		if id == val {
+			return true
+		}
+	}
+	return false
+}
