@@ -1,6 +1,6 @@
 package main
 
-import "gcwguide/server"
+import "gcapi/server"
 
 func main()  {
 	server.Run()

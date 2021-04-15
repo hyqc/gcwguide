@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
-	conf "gcwguide/config"
+	conf "gcapi/config"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"

@@ -2,20 +2,21 @@ package conf
 
 import (
 	"errors"
-	"gcwguide/extend/util"
+	"gcapi/extend/util"
 	"gopkg.in/yaml.v2"
 )
 
 // Config server config
 type Config struct {
-	Server Server `yaml:"server"`
-	Store  Store  `yaml:"store"`
+	Server  Server  `yaml:"server"`
+	Store   Store   `yaml:"store"`
+	Account Account `yaml:"account"`
 }
 
 // App application config
 type Server struct {
-	Name    string        `yaml:"name"`
-	Port    string        `yaml:"port"`
+	Name string `yaml:"name"`
+	Port string `yaml:"port"`
 }
 
 // Store store config
@@ -24,9 +25,14 @@ type Store struct {
 	Type       string `yaml:"type"`
 	Path       string `yaml:"path"`
 	Suffix     string `yaml:"suffix"`
-	BackupsDir string `json:"backups_dir"`
-	BackupsMax int    `json:"backups_max"`
+	BackupsDir string `yaml:"backups_dir"`
+	BackupsMax int    `yaml:"backups_max"`
 	FileSync   *util.FileSync
+}
+
+type Account struct {
+	Name       string `yaml:"name"`
+	Password   string `yaml:"password"`
 }
 
 var App Config

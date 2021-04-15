@@ -2,8 +2,8 @@ package api
 
 import (
 	"encoding/json"
-	conf "gcwguide/config"
-	"gcwguide/model"
+	conf "gcapi/config"
+	"gcapi/model"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"strings"
@@ -12,26 +12,36 @@ import (
 func WebSiteList(c *gin.Context) {
 	app := conf.App
 	output := conf.JsonOutput{}
-	data := conf.JsonOutputList{}
+	data := make(map[string]interface{})
 	fileModel := model.WebsitesModel{}
 	list, err := fileModel.List(app.Store.FileSync)
 	if err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.WebsiteListGetError
-		data.Rows = nil
-		data.Total = 0
+		data["rows"] = nil
+		data["total"] = 0
 		output.Data = data
 		output.Message = conf.ErrorMsg[conf.WebsiteListGetError]
 		response(c, output)
 		return
 	}
 	if list == nil {
-		data.Total = 0
-		data.Rows = nil
+		data["rows"] = nil
+		data["total"] = 0
 		output.Data = data
 	}else{
-		data.Total = len(list)
-		data.Rows = list
+		mapList := make(map[string][]model.WebsitesStoreItem)
+		for _, item := range list {
+			if item.Group == "" {
+				item.Group = model.WebsitesGroupDefault
+			}
+			if _, ok := mapList[item.Group];ok==false {
+				mapList[item.Group] = make([]model.WebsitesStoreItem,0)
+			}
+			mapList[item.Group] = append(mapList[item.Group],item)
+		}
+		data["rows"] = mapList
+		data["total"] = len(list)
 		output.Data = data
 	}
 	output.Debug = ""
@@ -63,7 +73,8 @@ func WebSiteAdd(c *gin.Context) {
 		return
 	}
 	fileModel := model.WebsitesModel{}
-	if err := fileModel.Add(app.Store.FileSync, data, app.Store.BackupsDir); err != nil {
+	success := 0
+	if success,err = fileModel.Add(app.Store.FileSync, data, app.Store.BackupsDir); err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.WebsiteListAddError
 		output.Data = nil
@@ -71,9 +82,11 @@ func WebSiteAdd(c *gin.Context) {
 		response(c, output)
 		return
 	}
+	info := make(map[string]interface{})
+	info["success"] = success
 	output.Debug = ""
 	output.Code = conf.Success
-	output.Data = nil
+	output.Data = info
 	output.Message = conf.ErrorMsg[conf.Success]
 	response(c, output)
 	return
@@ -101,7 +114,8 @@ func WebSiteUpdate(c *gin.Context) {
 		return
 	}
 	fileModel := model.WebsitesModel{}
-	if err := fileModel.Update(app.Store.FileSync, data, app.Store.BackupsDir); err != nil {
+	success := 0
+	if success,err = fileModel.Update(app.Store.FileSync, data, app.Store.BackupsDir); err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.WebsiteListUpdateError
 		output.Data = nil
@@ -109,9 +123,11 @@ func WebSiteUpdate(c *gin.Context) {
 		response(c, output)
 		return
 	}
+	info := make(map[string]interface{})
+	info["success"] = success
 	output.Debug = ""
 	output.Code = conf.Success
-	output.Data = nil
+	output.Data = info
 	output.Message = conf.ErrorMsg[conf.Success]
 	response(c, output)
 	return
@@ -150,7 +166,8 @@ func WebSiteDelete(c *gin.Context) {
 	}
 
 	fileModel := model.WebsitesModel{}
-	if err := fileModel.Delete(app.Store.FileSync, idsArr, app.Store.BackupsDir); err != nil {
+	success := 0
+	if success,err = fileModel.Delete(app.Store.FileSync, idsArr, app.Store.BackupsDir); err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.WebsiteListDeleteError
 		output.Data = nil
@@ -158,9 +175,11 @@ func WebSiteDelete(c *gin.Context) {
 		response(c, output)
 		return
 	}
+	info := make(map[string]interface{})
+	info["success"] = success
 	output.Debug = ""
 	output.Code = conf.Success
-	output.Data = nil
+	output.Data = info
 	output.Message = conf.ErrorMsg[conf.Success]
 	response(c, output)
 	return

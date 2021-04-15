@@ -1,7 +1,7 @@
 package server
 
 import (
-	"gcwguide/api"
+	"gcapi/api"
 	"github.com/gin-gonic/gin"
 )
 

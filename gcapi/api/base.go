@@ -1,7 +1,7 @@
 package api
 
 import (
-	conf "gcwguide/config"
+	conf "gcapi/config"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
