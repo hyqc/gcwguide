@@ -11,6 +11,7 @@ type WebsitesModel struct {
 	Model
 }
 
+// WebsitesStoreItem 存储的站点信息
 type WebsitesStoreItem struct {
 	ID     string `json:"id"`     // 网站ID
 	Group  string `json:"group"`  // 网站分组
@@ -23,9 +24,11 @@ type WebsitesStoreItem struct {
 }
 
 const (
+	// WebsitesGroupDefault 默认分组名称
 	WebsitesGroupDefault = "default"
 )
 
+// List 获取站点列表
 func (w *WebsitesModel) List(fileSync *util.FileSync) ([]WebsitesStoreItem, error) {
 	content, err := fileSync.ReadJSON()
 	if err != nil {
@@ -41,6 +44,7 @@ func (w *WebsitesModel) List(fileSync *util.FileSync) ([]WebsitesStoreItem, erro
 	return list, nil
 }
 
+// Add 添加站点
 func (w *WebsitesModel) Add(fileSync *util.FileSync, data WebsitesStoreItem, backupsDir string) (int, error) {
 	// 读取
 	list := make([]WebsitesStoreItem, 0)
@@ -59,6 +63,9 @@ func (w *WebsitesModel) Add(fileSync *util.FileSync, data WebsitesStoreItem, bac
 		if item.ID == data.ID {
 			return 0, nil
 		}
+		if item.Group == "" {
+			item.Group = WebsitesGroupDefault
+		}
 	}
 	list = append(list, data)
 	if err := w.save(list, fileSync); err != nil {
@@ -67,6 +74,7 @@ func (w *WebsitesModel) Add(fileSync *util.FileSync, data WebsitesStoreItem, bac
 	return 1, nil
 }
 
+// Update 更新站点
 func (w *WebsitesModel) Update(fileSync *util.FileSync, data WebsitesStoreItem, backupsDir string) (int, error) {
 	list := make([]WebsitesStoreItem, 0)
 	list, err := w.List(fileSync)
@@ -77,6 +85,9 @@ func (w *WebsitesModel) Update(fileSync *util.FileSync, data WebsitesStoreItem, 
 	oldID := data.ID
 	data.Update = time.Now().Format(time.RFC3339)
 	data.ID = util.CreateMD5(data.Host, true)
+	if data.Group == "" {
+		data.Group = WebsitesGroupDefault
+	}
 	for index, item := range list {
 		if item.ID == oldID {
 			list[index] = data
@@ -88,10 +99,12 @@ func (w *WebsitesModel) Update(fileSync *util.FileSync, data WebsitesStoreItem, 
 	return 1, nil
 }
 
+// RequestWebsitesDelete 删除请求参数
 type RequestWebsitesDelete struct {
 	IDS string `json:"ids"`
 }
 
+// Delete 删除站点
 func (w *WebsitesModel) Delete(fileSync *util.FileSync, ids []string, backupsDir string) (int, error) {
 	// 读取
 	list := make([]WebsitesStoreItem, 0)
@@ -113,6 +126,29 @@ func (w *WebsitesModel) Delete(fileSync *util.FileSync, ids []string, backupsDir
 		return 0, err
 	}
 	return success, nil
+}
+
+// Groups 获取站点分组列表
+func (w *WebsitesModel) Groups(fileSync *util.FileSync) ([]string, error) {
+	// 读取
+	list := make([]WebsitesStoreItem, 0)
+	list, err := w.List(fileSync)
+	if err != nil {
+		return nil, err
+	}
+	groups := make([]string,0)
+	mapGroups := make(map[string]string)
+	for _, item := range list {
+		if item.Group == "" {
+			continue
+		}
+		if _,ok:= mapGroups[item.Group];ok {
+			continue
+		}
+		mapGroups[item.Group] = item.Group
+		groups = append(groups,item.Group)
+	}
+	return groups,nil
 }
 
 func (w *WebsitesModel) save(list []WebsitesStoreItem, fileSync *util.FileSync) error {

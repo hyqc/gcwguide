@@ -32,6 +32,7 @@ func Run() {
 		}
 	}()
 	Router(r)
+	Static(r)
 
 	r.NoMethod(conf.HandleNotFound)
 	r.NoRoute(conf.HandleNotFound)

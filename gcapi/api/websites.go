@@ -184,3 +184,24 @@ func WebSiteDelete(c *gin.Context) {
 	response(c, output)
 	return
 }
+
+func WebsiteGroups(c *gin.Context)  {
+	app := conf.App
+	output := conf.JsonOutput{}
+	fileModel := model.WebsitesModel{}
+	list, err := fileModel.Groups(app.Store.FileSync)
+	if  err != nil {
+		output.Debug = err.Error()
+		output.Code = conf.WebsiteListDeleteError
+		output.Data = nil
+		output.Message = conf.ErrorMsg[conf.WebsiteListDeleteError]
+		response(c, output)
+		return
+	}
+	output.Debug = ""
+	output.Code = conf.Success
+	output.Data = list
+	output.Message = conf.ErrorMsg[conf.Success]
+	response(c, output)
+	return
+}

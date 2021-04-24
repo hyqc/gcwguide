@@ -80,7 +80,7 @@ func (f *FileSync) InitStoreFile(path string, mode os.FileMode) error {
 	return nil
 }
 
-// CloseStoreFile 退出程序是关闭文件资源
+// CloseStoreFile 退出程序时关闭文件资源
 func (f *FileSync) CloseStoreFile() error {
 	if f.File != nil {
 		return f.File.Close()

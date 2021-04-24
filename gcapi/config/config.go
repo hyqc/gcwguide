@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Server  Server  `yaml:"server"`
 	Store   Store   `yaml:"store"`
+	Static  Static  `yaml:"static"`
 	Account Account `yaml:"account"`
 }
 
@@ -25,14 +26,25 @@ type Store struct {
 	Type       string `yaml:"type"`
 	Path       string `yaml:"path"`
 	Suffix     string `yaml:"suffix"`
-	BackupsDir string `yaml:"backups_dir"`
-	BackupsMax int    `yaml:"backups_max"`
+	BackupsDir string `yaml:"backupsDir"`
+	BackupsMax int    `yaml:"backupsMax"`
 	FileSync   *util.FileSync
 }
 
+type Static struct {
+	Static string `yaml:"static"`
+	Upload Upload `yaml:"upload"`
+}
+
+type Upload struct {
+	Path    string `yaml:"path"`
+	Maxsize int64  `yaml:"maxsize"`
+	BaseUrl string `yaml:"baseUrl"`
+}
+
 type Account struct {
-	Name       string `yaml:"name"`
-	Password   string `yaml:"password"`
+	Name     string `yaml:"name"`
+	Password string `yaml:"password"`
 }
 
 var App Config

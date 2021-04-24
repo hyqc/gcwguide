@@ -8,9 +8,17 @@ store:
   # 存储文件的目录
   path: store/websites/webs.json
   # 备份文件的目录
-  BackupsDir: store/backups
+  backupsDir: store/backups
   # 最大保留备最近份文件数量
-  BackupsMax: 30
+  backupsMax: 30
+# 静态文件根目录
+static:
+  static: static
+  # 上传文件相对静态文件根目录地址
+  upload:
+    path: upload/image
+    maxsize: 2097152
+    baseUrl: http://127.0.0.1:8888
 account:
   name: admin
   password: 123456
