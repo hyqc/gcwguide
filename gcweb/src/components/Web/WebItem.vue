@@ -1,40 +1,62 @@
 <template>
-  <div class="web-item">
-    <div
-      class="web-item-avatar"
-      @click="openWeb"
-      @mouseover="showBackgroundEvent(true)"
-      @mouseout="showBackgroundEvent(false)"
-    >
-      <img src="/favicon.ico" class="web-item-avatar-img" />
-    </div>
-    <div class="web-item-title" @click="openWeb">
-      网易
-    </div>
+  <el-popover
+    placement="top-start"
+    :title="webItem.name"
+    :width="200"
+    trigger="hover"
+    :content="webItem.desc || webItem.name"
+  >
+    <template #reference>
+      <div class="web-item">
+        <div
+          class="web-item-avatar"
+          @click="openWeb"
+          @mouseover="showBackgroundEvent(true)"
+          @mouseout="showBackgroundEvent(false)"
+        >
+          <img
+            v-if="webItem.pic"
+            :src="webItem.pic"
+            class="web-item-avatar-img"
+          />
+          <span class="web-item-avatar-img" v-else>{{ webItem.name }}</span>
+        </div>
+        <div class="web-item-title" @click="openWeb">
+          {{ webItem.name }}
+        </div>
 
-    <el-dropdown
-      @command="webItemToolEvent"
-      trigger="click"
-      class="web-item-tool"
-    >
-      <i class="el-icon-more"></i>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item icon="el-icon-edit-outline" @click="editWebItemEvent">编辑</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-delete">删除</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
-    <div
-      class="web-item-background"
-      :class="showBackgroundClass"
-    ></div>
-    <WebForm :mode-show="modeShow" />
-  </div>
+        <el-dropdown trigger="click" class="web-item-tool" v-if="canEdit">
+          <i class="el-icon-more"></i>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                icon="el-icon-edit-outline"
+                @click="editWebItemEvent"
+                >编辑</el-dropdown-item
+              >
+              <el-dropdown-item
+                icon="el-icon-delete"
+                @click="deleteWebItemEvent"
+                >删除</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <div class="web-item-background" :class="showBackgroundClass"></div>
+        <web-form
+          :modeShow="modeShow"
+          :webItem="webItem"
+          :webGroups="webGroups"
+          @showModel="showModel"
+        />
+      </div>
+    </template>
+  </el-popover>
 </template>
 
 <script>
 import WebForm from "@/components/Web/WebForm.vue";
+import { WebDelete } from "@/api/file.js";
 
 export default {
   name: "WebItem",
@@ -55,11 +77,22 @@ export default {
         };
       },
     },
+    canEdit: {
+      type: Boolean,
+      default: true,
+    },
+    webGroups: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
   data() {
     return {
       showBlack: false,
-      modeShow: false
+      modeShow: false,
+      webItem: {},
     };
   },
   computed: {
@@ -69,18 +102,58 @@ export default {
         : "web-item-background-hide";
     },
   },
+  created() {
+    this.init();
+  },
   methods: {
+    init() {
+      this.webItem = JSON.parse(JSON.stringify(this.webInfo));
+    },
     openWeb() {
-      window.open(this.webInfo.host);
+      window.open(this.webItem.host);
     },
     showBackgroundEvent(show) {
       this.showBlack = !!show;
     },
-    webItemToolEvent(){
-
-    },
     editWebItemEvent() {
-      this.modeShow = true
+      this.modeShow = true;
+    },
+    deleteWebItemEvent() {
+      this.$confirm("确认要删除这个站点记录吗？")
+        .then(() => {
+          const data = { ids: this.webItem.id };
+          WebDelete(data)
+            .then((res) => {
+              res = res.data;
+              if (res.code) {
+                this.$message.error(res.message);
+              } else {
+                this.$message.success({
+                  message: res.message,
+                  type: "success",
+                  onClose() {
+                    window.location.reload();
+                  },
+                });
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              this.$message.error("删除失败");
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    showModel(data) {
+      this.modeShow = data.show;
+      this.webItem = data.webItem || {};
+    },
+  },
+  watch: {
+    webItem: {
+      deep: true,
     },
   },
 };
@@ -127,11 +200,15 @@ export default {
   cursor: pointer;
   background-color: white;
   z-index: 999;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 60%);
 }
 .web-item-avatar-img {
   margin: 7px;
   height: 36px;
   width: 36px;
+  font-size: 12px;
+  text-align: center;
+  display: block;
 }
 .web-item-title {
   position: absolute;
@@ -139,16 +216,16 @@ export default {
   right: 4px;
   text-align: center;
   width: 98px;
-  color: white;
+  color: rgb(19, 17, 17);
   font-size: 12px;
   z-index: 999;
 }
 .web-item-tool {
-  position: absolute;
+  position: absolute !important;
   top: 6px;
   right: 10px;
   width: 10px;
-  color: white;
+  color: rgb(185, 150, 42);
   display: none;
   z-index: 999;
   padding: 2px;

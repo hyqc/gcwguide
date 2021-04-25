@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-      <web-list />
-    </div>
+    <web-list />
+  </div>
 </template>
 
 <script>
@@ -17,12 +17,13 @@ export default {
 
 <style>
 body {
-  background: url(/background.jpg) no-repeat fixed top;
+  /* background: url(/background.jpg) no-repeat fixed top; */
+  background-color: #E9E9EB;
 }
 .container {
   width: 100%;
   min-height: 100%;
   position: relative;
   display: block;
-}</style
->>
+}
+</style>

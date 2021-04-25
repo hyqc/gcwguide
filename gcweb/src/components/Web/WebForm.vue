@@ -1,5 +1,10 @@
 <template>
-  <el-dialog title="编辑站点" v-model="dialogFormVisible" :width="600">
+  <el-dialog
+    :title="saveTitle"
+    v-model="dialogFormVisible"
+    :width="600"
+    @closed="closeModel"
+  >
     <el-form :model="formData" :rules="rules" ref="formData">
       <el-form-item label="上传图片" :label-width="formLabelWidth" prop="pic">
         <el-upload
@@ -22,26 +27,28 @@
         :label-width="formLabelWidth"
         prop="pic"
       >
-        <el-input v-model="formData.pic" autocomplete="on"></el-input>
+        <el-input class="web-input-width" v-model="formData.pic" autocomplete="on"></el-input>
       </el-form-item>
       <el-form-item label="站点名称" :label-width="formLabelWidth" prop="name">
-        <el-input v-model="formData.name" autocomplete="on"></el-input>
+        <el-input class="web-input-width" v-model="formData.name" autocomplete="on"></el-input>
       </el-form-item>
       <el-form-item label="站点链接" :label-width="formLabelWidth" prop="host">
-        <el-input v-model="formData.host" autocomplete="on"></el-input>
+        <el-input class="web-input-width" v-model="formData.host" autocomplete="on"></el-input>
       </el-form-item>
       <el-form-item label="站点分组" :label-width="formLabelWidth" prop="group">
-        <el-select v-model="formData.group" placeholder="请选择站点分组">
+        <el-input class="web-input-width" v-if="isEditGroup" v-model="formData.group" autocomplete="on"></el-input>
+        <el-select v-else v-model="formData.group" placeholder="请选择站点分组">
           <el-option
-            v-for="(item, key) in groupsList"
+            v-for="(item, key) in webGroups"
             :label="item"
             :value="item"
             :key="key"
           ></el-option>
         </el-select>
+        <el-button class="edit-group" type="warning" icon="el-icon-edit" @click="editGroup">{{ isEditGroup ? '选择分组' : '编辑分组'}}</el-button>
       </el-form-item>
       <el-form-item label="站点描述" :label-width="formLabelWidth" prop="desc">
-        <el-input v-model="formData.desc" autocomplete="on"></el-input>
+        <el-input class="web-input-width" v-model="formData.desc" autocomplete="on"></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -54,7 +61,7 @@
 </template>
 
 <script>
-import { WebAdd, WebGroups, WebLogoUploadUrl } from "@/api/file.js";
+import { WebAdd, WebEdit, WebLogoUploadUrl } from "@/api/file.js";
 
 export default {
   name: "WebForm",
@@ -76,9 +83,16 @@ export default {
         };
       },
     },
+    webGroups: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
   data() {
     return {
+      saveTitle: "",
       dialogFormVisible: false,
       formLabelWidth: "120px",
       formData: null,
@@ -96,40 +110,22 @@ export default {
           { type: "url", message: "不是有效的地址", trigger: "blur" },
         ],
       },
-      groupsList: [],
+      isEditGroup: false
     };
   },
-  created() {
+  mounted() {
     this.init();
   },
   methods: {
     init() {
       this.dialogFormVisible = this.modeShow;
       this.formData = JSON.parse(JSON.stringify(this.webItem));
-      this.getWebsitesGroups();
+      this.saveTitle = this.formData.id ? "编辑" : "新建";
     },
     submit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const _this = this;
-          WebAdd(this.formData)
-            .then((res) => {
-              res = res.data;
-              if (res.code) {
-                this.$message.error(res.message || "保存失败");
-              } else {
-                this.$message.success({
-                  message: res.message || "保存成功",
-                  onClose() {
-                    _this.dialogFormVisible = false;
-                  },
-                });
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-              this.$message.error("保存失败");
-            });
+          this.saveWeb()
         } else {
           console.log("error submit!!");
           return false;
@@ -155,12 +151,37 @@ export default {
         this.dialogImageUrl = this.formData.pic;
       }
     },
-    getWebsitesGroups() {
-      WebGroups().then((res) => {
-        res = res.data;
-        this.groupsList = res.data || [];
-      });
+    closeModel() {
+      this.emitCloseModel({show: false,webItem: this.formData});
     },
+    emitCloseModel() {
+      this.$emit("showModel", {show: false,webItem: this.formData});
+    },
+    saveWeb() {
+      const _this = this;
+      const saveWeb = this.formData.id ? WebEdit : WebAdd
+      saveWeb(this.formData)
+        .then((res) => {
+          res = res.data;
+          if (res.code) {
+            this.$message.error(res.message || "保存失败");
+          } else {
+            this.$message.success({
+              message: res.message || "保存成功",
+              onClose() {
+                _this.emitCloseModel();
+              },
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$message.error("保存失败");
+        });
+    },
+    editGroup(){
+      this.isEditGroup = !this.isEditGroup
+    }
   },
   watch: {
     modeShow(n) {
@@ -170,13 +191,21 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+.el-dialog {
+  z-index: 999999;
+}
 .avatar-uploader .el-upload {
   border: 1px dashed #524e4e;
   border-radius: 6px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+}
+.el-upload--picture-card{
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
 }
 .avatar-uploader .el-upload:hover {
   border-color: #409eff;
@@ -192,5 +221,11 @@ export default {
   width: 30px;
   height: 30px;
   display: block;
+}
+.edit-group{
+  margin-left: 2rem;
+}
+.web-input-width input{
+  max-width: 372px;
 }
 </style>

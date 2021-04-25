@@ -9,11 +9,36 @@ const fileApi = {
   imageUpload: "upload/image",
 };
 
+export function WebList(data) {
+  return axios({
+    method: "get",
+    data: data,
+    url: fileApi.list,
+  });
+}
+
 export function WebAdd(data) {
   return axios({
     method: "post",
     data: data,
     url: fileApi.add,
+  });
+}
+
+
+export function WebEdit(data) {
+  return axios({
+    method: "post",
+    data: data,
+    url: fileApi.update,
+  });
+}
+
+export function WebDelete(data) {
+  return axios({
+    method: "post",
+    data: data,
+    url: fileApi.delete,
   });
 }
 
