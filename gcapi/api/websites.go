@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	conf "gcapi/config"
+	"gcapi/extend/util"
 	"gcapi/model"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -29,16 +30,16 @@ func WebSiteList(c *gin.Context) {
 		data["rows"] = nil
 		data["total"] = 0
 		output.Data = data
-	}else{
+	} else {
 		mapList := make(map[string][]model.WebsitesStoreItem)
 		for _, item := range list {
 			if item.Group == "" {
 				item.Group = model.WebsitesGroupDefault
 			}
-			if _, ok := mapList[item.Group];ok==false {
-				mapList[item.Group] = make([]model.WebsitesStoreItem,0)
+			if _, ok := mapList[item.Group]; ok == false {
+				mapList[item.Group] = make([]model.WebsitesStoreItem, 0)
 			}
-			mapList[item.Group] = append(mapList[item.Group],item)
+			mapList[item.Group] = append(mapList[item.Group], item)
 		}
 		data["rows"] = mapList
 		data["total"] = len(list)
@@ -54,6 +55,15 @@ func WebSiteList(c *gin.Context) {
 func WebSiteAdd(c *gin.Context) {
 	app := conf.App
 	output := conf.JsonOutput{}
+	j := util.JWT{}
+	if err := j.Check(getAuthorization(c), app.Account.Name, app.Account.Password); err != nil {
+		output.Debug = err.Error()
+		output.Code = conf.AuthTokenAccountInvalid
+		output.Data = nil
+		output.Message = conf.ErrorMsg[conf.AuthTokenAccountInvalid]
+		response(c, output)
+		return
+	}
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		output.Debug = err.Error()
@@ -74,7 +84,7 @@ func WebSiteAdd(c *gin.Context) {
 	}
 	fileModel := model.WebsitesModel{}
 	success := 0
-	if success,err = fileModel.Add(app.Store.FileSync, data, app.Store.BackupsDir); err != nil {
+	if success, err = fileModel.Add(app.Store.FileSync, data, app.Store.BackupsDir); err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.WebsiteListAddError
 		output.Data = nil
@@ -95,6 +105,15 @@ func WebSiteAdd(c *gin.Context) {
 func WebSiteUpdate(c *gin.Context) {
 	app := conf.App
 	output := conf.JsonOutput{}
+	j := util.JWT{}
+	if err := j.Check(getAuthorization(c), app.Account.Name, app.Account.Password); err != nil {
+		output.Debug = err.Error()
+		output.Code = conf.AuthTokenAccountInvalid
+		output.Data = nil
+		output.Message = conf.ErrorMsg[conf.AuthTokenAccountInvalid]
+		response(c, output)
+		return
+	}
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		output.Debug = err.Error()
@@ -115,7 +134,7 @@ func WebSiteUpdate(c *gin.Context) {
 	}
 	fileModel := model.WebsitesModel{}
 	success := 0
-	if success,err = fileModel.Update(app.Store.FileSync, data, app.Store.BackupsDir); err != nil {
+	if success, err = fileModel.Update(app.Store.FileSync, data, app.Store.BackupsDir); err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.WebsiteListUpdateError
 		output.Data = nil
@@ -136,6 +155,15 @@ func WebSiteUpdate(c *gin.Context) {
 func WebSiteDelete(c *gin.Context) {
 	app := conf.App
 	output := conf.JsonOutput{}
+	j := util.JWT{}
+	if err := j.Check(getAuthorization(c), app.Account.Name, app.Account.Password); err != nil {
+		output.Debug = err.Error()
+		output.Code = conf.AuthTokenAccountInvalid
+		output.Data = nil
+		output.Message = conf.ErrorMsg[conf.AuthTokenAccountInvalid]
+		response(c, output)
+		return
+	}
 	body, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		output.Debug = err.Error()
@@ -167,7 +195,7 @@ func WebSiteDelete(c *gin.Context) {
 
 	fileModel := model.WebsitesModel{}
 	success := 0
-	if success,err = fileModel.Delete(app.Store.FileSync, idsArr, app.Store.BackupsDir); err != nil {
+	if success, err = fileModel.Delete(app.Store.FileSync, idsArr, app.Store.BackupsDir); err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.WebsiteListDeleteError
 		output.Data = nil
@@ -185,12 +213,21 @@ func WebSiteDelete(c *gin.Context) {
 	return
 }
 
-func WebsiteGroups(c *gin.Context)  {
+func WebsiteGroups(c *gin.Context) {
 	app := conf.App
 	output := conf.JsonOutput{}
+	j := util.JWT{}
+	if err := j.Check(getAuthorization(c), app.Account.Name, app.Account.Password); err != nil {
+		output.Debug = err.Error()
+		output.Code = conf.AuthTokenAccountInvalid
+		output.Data = nil
+		output.Message = conf.ErrorMsg[conf.AuthTokenAccountInvalid]
+		response(c, output)
+		return
+	}
 	fileModel := model.WebsitesModel{}
 	list, err := fileModel.Groups(app.Store.FileSync)
-	if  err != nil {
+	if err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.WebsiteListDeleteError
 		output.Data = nil
