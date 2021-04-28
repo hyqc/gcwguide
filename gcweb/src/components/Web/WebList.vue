@@ -9,39 +9,56 @@
       <template #header>
         <div class="card-header">
           <span class="group-info"
-            ><i class="el-icon-s-tools"></i>&nbsp;&nbsp;<span class="group-text">{{ group }}</span></span
+            ><i class="el-icon-s-tools"></i>&nbsp;&nbsp;<span
+              class="group-text"
+              >{{ group }}</span
+            ></span
           >
-          <el-button class="button" type="text" @click="addWeb"
-            ><i class="el-icon-circle-plus"></i
-          ></el-button>
+          <span>
+            <el-button class="button" type="text" @click="login"
+              ><i :class="loginIcon" :title="canEdit ? '退出登录' : '登录'"></i
+            ></el-button>
+            <el-button class="button" type="text" @click="addWeb" title="添加站点"
+              ><i class="el-icon-circle-plus"></i
+            ></el-button>
+          </span>
         </div>
       </template>
-      <web-group :webList="webList" :webGroups="webGroups" />
+      <web-group :webList="webList" :webGroups="webGroups" :canEdit="canEdit" />
     </el-card>
     <web-form
       :modeShow="modeShow"
       :webGroups="webGroups"
       @showModel="showModel"
     />
+
+    <login-form :modeShow="modeLoginForm" @showModel="showLoginModel" />
   </div>
 </template>
 
 <script>
 import WebGroup from "@/components/Web/WebGroup.vue";
 import WebForm from "@/components/Web/WebForm.vue";
-import { WebList, WebGroups } from "@/api/file.js";
+import LoginForm from "@/components/Auth/LoginForm.vue";
+import { WebList, WebGroups } from "@/api/website.js";
+import { CookieGetToken, CookieRemoveToken } from "@/api/cookie.js";
 
 export default {
   name: "WebList",
   components: {
     WebGroup,
-    WebForm
+    WebForm,
+    LoginForm,
   },
   data() {
     return {
       webListObject: {},
       webGroups: [],
-      modeShow: false
+      modeShow: false,
+      modeLoginForm: false,
+      canEdit: false,
+      token: "",
+      loginIcon: ""
     };
   },
   created() {
@@ -49,6 +66,9 @@ export default {
   },
   methods: {
     init() {
+      this.token = CookieGetToken();
+      this.isCanEdit()
+      this.setLoginIcon()
       this.getWebList();
       this.getWebGroups();
     },
@@ -87,11 +107,52 @@ export default {
         });
     },
     addWeb() {
-      this.modeShow = true
+      if (this.token) {
+        this.modeShow = true;
+      } else {
+        this.modeLoginForm = true;
+      }
     },
-    showModel(data){
-      this.modeShow = data.show
-      window.location.reload()
+    login() {
+      if (this.canEdit) {
+        const _this = this;
+        this.$confirm("确定要退出登录吗？").then(() => {
+          CookieRemoveToken();
+          CookieGetToken();
+          _this.isCanEdit();
+          _this.setLoginIcon()
+        });
+      } else {
+        this.modeLoginForm = true;
+      }
+    },
+    showModel(data) {
+      this.modeShow = data.show;
+      window.location.reload();
+    },
+    showLoginModel(data) {
+      this.modeLoginForm = data.show;
+      this.token = CookieGetToken();
+      this.setLoginIcon()
+      this.isCanEdit()
+    },
+    isCanEdit() {
+      return (this.canEdit = !!CookieGetToken());
+    },
+    setLoginIcon() {
+      return this.loginIcon = CookieGetToken() ? "el-icon-switch-button" : "el-icon-user-solid";
+    },
+  },
+  watch: {
+    token() {
+      this.setLoginIcon()
+      this.isCanEdit()
+    },
+    canEdit(n) {
+      console.log(n)
+    },
+    loginIcon(n){
+      console.log(n)
     }
   },
 };
@@ -125,7 +186,7 @@ export default {
 .group-info {
   color: #409eff;
 }
-.group-text{
+.group-text {
   padding: auto 1rem;
   font-size: 0.9rem;
 }

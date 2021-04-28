@@ -9,10 +9,10 @@ import (
 type JWT struct {
 }
 
-func (j *JWT) Make(name,pwd string) (string, error) {
+func (j *JWT) Make(name,pwd string,expire time.Duration) (string, error) {
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"name":  name,
-		"exp":  time.Now().Add(time.Hour * 1).Unix(),
+		"exp":  time.Now().Add(expire * time.Second).Unix(),
 	})
 	token, err := at.SignedString([]byte(pwd))
 	if err != nil {

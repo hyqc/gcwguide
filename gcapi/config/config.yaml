@@ -20,5 +20,6 @@ static:
     maxsize: 2097152
     baseUrl: http://127.0.0.1:8888
 account:
+  cookieExpireSeconds: 7200
   name: admin
   password: 123456

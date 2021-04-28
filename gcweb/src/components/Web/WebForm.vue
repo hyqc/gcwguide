@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { WebAdd, WebEdit, WebLogoUploadUrl } from "@/api/file.js";
+import { WebAdd, WebEdit, WebLogoUploadUrl } from "@/api/website.js";
 
 export default {
   name: "WebForm",

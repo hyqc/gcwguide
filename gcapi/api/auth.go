@@ -43,7 +43,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	j := util.JWT{}
-	token, err := j.Make(app.Account.Name,app.Account.Password)
+	token, err := j.Make(app.Account.Name,app.Account.Password,app.Account.CookieExpireSeconds)
 	if err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.Error
@@ -54,6 +54,7 @@ func Login(c *gin.Context) {
 	}
 	res := make(map[string]interface{})
 	res["token"] = token
+	res["expire"] = app.Account.CookieExpireSeconds
 	output.Debug = ""
 	output.Code = conf.Success
 	output.Data = res

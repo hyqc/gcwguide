@@ -4,7 +4,7 @@
     :title="webItem.name"
     :width="200"
     trigger="hover"
-    :content="webItem.desc || webItem.name"
+    :content="tipContent"
   >
     <template #reference>
       <div class="web-item">
@@ -51,12 +51,16 @@
         />
       </div>
     </template>
+    <div>
+      <p><span>{{ webItem.desc || webItem.name }}</span></p>
+      <p><span>{{ webItem.host }}</span></p>
+    </div>
   </el-popover>
 </template>
 
 <script>
 import WebForm from "@/components/Web/WebForm.vue";
-import { WebDelete } from "@/api/file.js";
+import { WebDelete } from "@/api/website.js";
 
 export default {
   name: "WebItem",
@@ -101,6 +105,9 @@ export default {
         ? "web-item-background-show"
         : "web-item-background-hide";
     },
+    tipContent(){
+      return this.webItem.desc || this.webItem.name
+    }
   },
   created() {
     this.init();

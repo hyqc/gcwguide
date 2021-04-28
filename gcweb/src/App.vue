@@ -17,7 +17,6 @@ export default {
 
 <style>
 body {
-  /* background: url(/background.jpg) no-repeat fixed top; */
   background-color: #E9E9EB;
 }
 .container {

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"gcapi/extend/util"
 	"gopkg.in/yaml.v2"
+	"time"
 )
 
 // Config server config
@@ -43,8 +44,9 @@ type Upload struct {
 }
 
 type Account struct {
-	Name     string `yaml:"name"`
-	Password string `yaml:"password"`
+	Name                string        `yaml:"name"`
+	Password            string        `yaml:"password"`
+	CookieExpireSeconds time.Duration `yaml:"cookieExpireSeconds"`
 }
 
 var App Config
@@ -64,6 +66,9 @@ func InitConfig() (*Config, error) {
 		errMsg := errors.New("parse config []byte to struct error ：" + err.Error())
 		return nil, errMsg
 	}
+
+	c.initAccount()
+
 	if err := c.initStoreDrive(); err != nil {
 		return &c, nil
 	}
@@ -87,4 +92,10 @@ func (c *Config) initStoreDrive() (err error) {
 		}
 	}
 	return nil
+}
+
+func (c *Config) initAccount() {
+	if c.Account.CookieExpireSeconds <= 7200 {
+		c.Account.CookieExpireSeconds = 7200
+	}
 }
