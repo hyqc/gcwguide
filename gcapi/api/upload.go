@@ -60,8 +60,8 @@ func Image(c *gin.Context) {
 		response(c, output)
 		return
 	}
-	fileNewName := makeNewFileName(headers.Filename)
-	if err := c.SaveUploadedFile(headers, fileNewName); err != nil {
+	fileFullPath, fileNewName := makeNewFileName(headers.Filename)
+	if err := c.SaveUploadedFile(headers, fileFullPath); err != nil {
 		log.Println(err)
 		output.Debug = err.Error()
 		output.Code = conf.UploadFileError
@@ -80,18 +80,16 @@ func Image(c *gin.Context) {
 	return
 }
 
-func makeNewFileName(filename string) string {
-	return getStaticUploadImagePath() + util.CreateMD5(filename, true) + filepath.Ext(filename)
+func makeNewFileName(filename string) (fileFullPath, fileNewName string) {
+	fileNewName = util.CreateMD5(filename + util.CreateRandomUNID(12), true) + filepath.Ext(filename)
+	fileFullPath = getStaticUploadImagePath() + fileNewName
+	return fileFullPath, fileNewName
 }
 
 func makeNewFileUrl(filepath string) string {
-	return conf.App.Static.Upload.BaseUrl + "/"+ filepath
-}
-
-func getStaticPath() string {
-	return conf.App.Static.Static + "/"
+	return conf.App.Static.Upload.BaseUrl + conf.App.Static.Upload.Path +filepath
 }
 
 func getStaticUploadImagePath() string {
-	return getStaticPath() + conf.App.Static.Upload.Path + "/"
+	return conf.App.Static.Static + conf.App.Static.Upload.Path
 }

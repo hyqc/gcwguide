@@ -1,8 +1,9 @@
 <template>
   <el-dialog
     :title="saveTitle"
-    v-model="dialogFormVisible"
     :width="600"
+    :close-on-click-modal="false"
+    v-model="dialogFormVisible"
     @closed="closeModel"
   >
     <el-form :model="formData" :rules="rules" ref="formData">
@@ -13,6 +14,7 @@
           :on-preview="uploadPreview"
           :on-remove="uploadRemove"
           :on-success="uploadSuccess"
+          :on-error="uploadError"
           :accept="accept"
           :limit="1"
         >
@@ -186,6 +188,9 @@ export default {
         this.formData.pic = res.data.url;
         this.dialogImageUrl = this.formData.pic;
       }
+    },
+    uploadError(err){
+      console.log(err)
     },
     closeModel() {
       this.emitCloseModel({ show: false, webItem: this.formData });

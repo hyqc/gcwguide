@@ -1,9 +1,10 @@
 <template>
   <el-dialog
     :title="saveTitle"
-    v-model="dialogFormVisible"
     :width="600"
+    :close-on-click-modal="false"
     @closed="closeModel"
+    v-model="dialogFormVisible"
   >
     <el-form :model="formData" :rules="rules" ref="formData">
       <el-form-item label="账号" :label-width="formLabelWidth" prop="name">

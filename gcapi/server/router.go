@@ -2,7 +2,6 @@ package server
 
 import (
 	"gcapi/api"
-	conf "gcapi/config"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,7 +9,6 @@ func Router(r *gin.Engine) {
 	website(r)
 	upload(r)
 	auth(r)
-	static(r)
 }
 
 func website(r *gin.Engine) {
@@ -36,8 +34,4 @@ func auth(r *gin.Engine) {
 	{
 		auth.POST("/login", api.Login)
 	}
-}
-
-func static(r *gin.Engine) {
-	r.Static("/"+conf.App.Static.Static, "./"+conf.App.Static.Static)
 }
