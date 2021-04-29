@@ -5,11 +5,14 @@
 
 #### 示例站点：https://nav.jianean.com/
 [demo](https://nav.jianean.com/)
-
 ###### 操作账号
 - 用户名：add
 - 密码：123456
 - 权限：只能添加，不能删除和编辑
+
+#### https nginx 配置示例：https://www.jianean.com/blog/74.html
+[https nginx 配置示例](https://www.jianean.com/blog/74.html)
+
 
 #### 软件架构
 1.前端：vue3 + element
