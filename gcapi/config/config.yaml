@@ -14,7 +14,7 @@ store:
 # 静态文件根目录
 static:
   static: /data/server/web/gcweb/static/
-  #static: E:/Gitlab-Local/gcwguide/gcweb/public/
+  #static: E:/Gitlab-Local/gcwguide/gcweb/public/static/
   # 上传文件相对静态文件根目录地址
   upload:
     path: upload/image/
