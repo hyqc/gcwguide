@@ -131,6 +131,7 @@ export default {
           CookieGetToken();
           _this.isCanEdit();
           _this.setLoginIcon();
+          window.location.reload();
         });
       } else {
         this.modeLoginForm = true;
