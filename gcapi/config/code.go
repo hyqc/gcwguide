@@ -6,7 +6,7 @@ const (
 	Success = 0
 	Error   = 1000
 
-	ParamsInvalid          = 4001
+	ParamsInvalid = 4001
 
 	WebsiteListGetError    = 5001
 	WebsiteListAddError    = 5002
@@ -17,8 +17,11 @@ const (
 	UploadFileSizeOutRange = 6001
 	UploadFileTypeNotAllow = 6002
 
-	AuthLoginAccountInvalid = 7000
-	AuthTokenAccountInvalid = 7001
+	AuthLoginAccountInvalid        = 7000
+	AuthTokenAccountInvalid        = 7001
+	AuthTokenAccountNotAllowAdd    = 7002
+	AuthTokenAccountNotAllowEdit   = 7003
+	AuthTokenAccountNotAllowDelete = 7004
 )
 
 func init() {
@@ -37,4 +40,7 @@ func init() {
 
 	ErrorMsg[AuthLoginAccountInvalid] = "账号或密码错误"
 	ErrorMsg[AuthTokenAccountInvalid] = "登录已过期或未登录"
+	ErrorMsg[AuthTokenAccountNotAllowAdd] = "您没有添加权限"
+	ErrorMsg[AuthTokenAccountNotAllowEdit] = "您没有编辑权限"
+	ErrorMsg[AuthTokenAccountNotAllowDelete] = "您没有删除权限"
 }

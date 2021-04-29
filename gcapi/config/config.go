@@ -44,15 +44,28 @@ type Upload struct {
 }
 
 type Account struct {
-	Name                string        `yaml:"name"`
-	Password            string        `yaml:"password"`
+	Secret              string        `yaml:"secret"`
+	Admin               string        `yaml:"admin"`
+	Members             []User        `yaml:"members"`
 	CookieExpireSeconds time.Duration `yaml:"cookieExpireSeconds"`
+}
+
+type User struct {
+	Name     string `yaml:"name"`
+	Rule     string `yaml:"rule"`
+	Password string `yaml:"password"`
 }
 
 var App Config
 
 const (
 	StoreDriveFile = "file"
+	// RuleAdd 添加权限
+	RuleAdd = "add"
+	// RuleEdit 编辑权限
+	RuleEdit = "edit"
+	// RuleDelete 删除权限
+	RuleDelete = "delete"
 )
 
 func InitConfig() (*Config, error) {

@@ -23,5 +23,22 @@ static:
     #baseUrl: http://localhost:8080/
 account:
   cookieExpireSeconds: 7200
-  name: admin
-  password: 123456
+  secert: gcweb
+  admin: admin
+  members:
+    - name: admin
+      rule: add,edit,delete
+      password: 123456
+    - name: save
+      rule: add,edit
+      password: 123456
+    - name: add
+      rule: add
+      password: 123456
+    - name: edit
+      rule: edit
+      password: 123456
+    - name: delete
+      rule: delete
+      password: 123456
+

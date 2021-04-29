@@ -6,6 +6,7 @@ import (
 	"gcapi/extend/util"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"strings"
 )
 
 type RequestLoginParams struct {
@@ -34,7 +35,8 @@ func Login(c *gin.Context) {
 		response(c, output)
 		return
 	}
-	if data.Name != app.Account.Name || data.Pwd != app.Account.Password {
+
+	if checkAccount(&data) == false {
 		output.Debug = "account or password invalid"
 		output.Code = conf.AuthLoginAccountInvalid
 		output.Data = nil
@@ -43,7 +45,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	j := util.JWT{}
-	token, err := j.Make(app.Account.Name,app.Account.Password,app.Account.CookieExpireSeconds)
+	token, err := j.Make(data.Name, app.Account.Secret, app.Account.CookieExpireSeconds)
 	if err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.Error
@@ -61,4 +63,27 @@ func Login(c *gin.Context) {
 	output.Message = conf.ErrorMsg[conf.Success]
 	response(c, output)
 	return
+}
+
+func checkAccount(r *RequestLoginParams) bool {
+	members := conf.App.Account.Members
+	for _, user := range members {
+		if user.Password == r.Pwd && user.Name == r.Name {
+			return true
+		}
+	}
+	return false
+}
+
+func checkAuth(name, methodType string) bool {
+	members := conf.App.Account.Members
+	for _, user := range members {
+		if user.Name == name {
+			auths := strings.Split(user.Rule, ",")
+			for _, auth := range auths {
+				return auth == methodType
+			}
+		}
+	}
+	return false
 }

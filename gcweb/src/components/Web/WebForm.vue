@@ -197,6 +197,7 @@ export default {
     },
     emitCloseModel() {
       this.$emit("showModel", { show: false, webItem: this.formData });
+      window.location.reload();
     },
     saveWeb() {
       const _this = this;

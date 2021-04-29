@@ -56,11 +56,20 @@ func WebSiteAdd(c *gin.Context) {
 	app := conf.App
 	output := conf.JsonOutput{}
 	j := util.JWT{}
-	if err := j.Check(getAuthorization(c), app.Account.Name, app.Account.Password); err != nil {
+	name, err := j.Check(getAuthorization(c), app.Account.Secret)
+	if err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.AuthTokenAccountInvalid
 		output.Data = nil
 		output.Message = conf.ErrorMsg[conf.AuthTokenAccountInvalid]
+		response(c, output)
+		return
+	}
+	if checkAuth(name, conf.RuleAdd) == false {
+		output.Debug = conf.ErrorMsg[conf.AuthTokenAccountNotAllowAdd]
+		output.Code = conf.AuthTokenAccountNotAllowAdd
+		output.Data = nil
+		output.Message = conf.ErrorMsg[conf.AuthTokenAccountNotAllowAdd]
 		response(c, output)
 		return
 	}
@@ -106,11 +115,20 @@ func WebSiteUpdate(c *gin.Context) {
 	app := conf.App
 	output := conf.JsonOutput{}
 	j := util.JWT{}
-	if err := j.Check(getAuthorization(c), app.Account.Name, app.Account.Password); err != nil {
+	name, err := j.Check(getAuthorization(c), app.Account.Secret)
+	if err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.AuthTokenAccountInvalid
 		output.Data = nil
 		output.Message = conf.ErrorMsg[conf.AuthTokenAccountInvalid]
+		response(c, output)
+		return
+	}
+	if checkAuth(name, conf.RuleEdit) == false {
+		output.Debug = conf.ErrorMsg[conf.AuthTokenAccountNotAllowEdit]
+		output.Code = conf.AuthTokenAccountNotAllowEdit
+		output.Data = nil
+		output.Message = conf.ErrorMsg[conf.AuthTokenAccountNotAllowEdit]
 		response(c, output)
 		return
 	}
@@ -156,11 +174,20 @@ func WebSiteDelete(c *gin.Context) {
 	app := conf.App
 	output := conf.JsonOutput{}
 	j := util.JWT{}
-	if err := j.Check(getAuthorization(c), app.Account.Name, app.Account.Password); err != nil {
+	name, err := j.Check(getAuthorization(c), app.Account.Secret)
+	if err != nil {
 		output.Debug = err.Error()
 		output.Code = conf.AuthTokenAccountInvalid
 		output.Data = nil
 		output.Message = conf.ErrorMsg[conf.AuthTokenAccountInvalid]
+		response(c, output)
+		return
+	}
+	if checkAuth(name, conf.RuleDelete) == false {
+		output.Debug = conf.ErrorMsg[conf.AuthTokenAccountNotAllowDelete]
+		output.Code = conf.AuthTokenAccountNotAllowDelete
+		output.Data = nil
+		output.Message = conf.ErrorMsg[conf.AuthTokenAccountNotAllowDelete]
 		response(c, output)
 		return
 	}
