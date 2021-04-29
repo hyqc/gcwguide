@@ -1,5 +1,26 @@
 <template>
   <div>
+    <div class="box-tool">
+      <el-button
+        title="添加站点"
+        class="button"
+        type="danger"
+        size="small"
+        @click="addWeb"
+      >
+        <i class="el-icon-plus"></i>
+      </el-button>
+      <el-button
+        circle
+        class="button"
+        type="primary"
+        size="small"
+        :title="canEdit ? '退出登录' : '登录'"
+        @click="login"
+      >
+        <i :class="loginIcon"></i>
+      </el-button>
+    </div>
     <el-card
       class="box-card"
       v-for="(webList, group) in webListObject"
@@ -8,19 +29,11 @@
     >
       <template #header>
         <div class="card-header">
-          <span class="group-info"
-            ><i class="el-icon-s-tools"></i>&nbsp;&nbsp;<span
-              class="group-text"
-              >{{ group }}</span
-            ></span
-          >
-          <span>
-            <el-button class="button" type="text" @click="login"
-              ><i :class="loginIcon" :title="canEdit ? '退出登录' : '登录'"></i
-            ></el-button>
-            <el-button class="button" type="text" @click="addWeb" title="添加站点"
-              ><i class="el-icon-circle-plus"></i
-            ></el-button>
+          <span class="group-info">
+            <i class="el-icon-s-tools"></i>&nbsp;&nbsp;
+            <span class="group-text">
+              {{ group }}
+            </span>
           </span>
         </div>
       </template>
@@ -31,7 +44,6 @@
       :webGroups="webGroups"
       @showModel="showModel"
     />
-
     <login-form :modeShow="modeLoginForm" @showModel="showLoginModel" />
   </div>
 </template>
@@ -58,7 +70,7 @@ export default {
       modeLoginForm: false,
       canEdit: false,
       token: "",
-      loginIcon: ""
+      loginIcon: "",
     };
   },
   created() {
@@ -67,8 +79,8 @@ export default {
   methods: {
     init() {
       this.token = CookieGetToken();
-      this.isCanEdit()
-      this.setLoginIcon()
+      this.isCanEdit();
+      this.setLoginIcon();
       this.getWebList();
       this.getWebGroups();
     },
@@ -76,7 +88,6 @@ export default {
       WebList()
         .then((res) => {
           res = res.data;
-          console.log(res);
           if (res.code) {
             this.$message.error(
               res.message || "获取站点失败，请联系系统管理员！"
@@ -93,7 +104,6 @@ export default {
       WebGroups()
         .then((res) => {
           res = res.data;
-          console.log(res);
           if (res.code) {
             this.$message.error(
               res.message || "获取站点失败，请联系系统管理员！"
@@ -120,7 +130,7 @@ export default {
           CookieRemoveToken();
           CookieGetToken();
           _this.isCanEdit();
-          _this.setLoginIcon()
+          _this.setLoginIcon();
         });
       } else {
         this.modeLoginForm = true;
@@ -133,27 +143,25 @@ export default {
     showLoginModel(data) {
       this.modeLoginForm = data.show;
       this.token = CookieGetToken();
-      this.setLoginIcon()
-      this.isCanEdit()
+      this.setLoginIcon();
+      this.isCanEdit();
     },
     isCanEdit() {
       return (this.canEdit = !!CookieGetToken());
     },
     setLoginIcon() {
-      return this.loginIcon = CookieGetToken() ? "el-icon-switch-button" : "el-icon-user-solid";
+      return (this.loginIcon = CookieGetToken()
+        ? "el-icon-switch-button"
+        : "el-icon-user-solid");
     },
   },
   watch: {
     token() {
-      this.setLoginIcon()
-      this.isCanEdit()
+      this.setLoginIcon();
+      this.isCanEdit();
     },
-    canEdit(n) {
-      console.log(n)
-    },
-    loginIcon(n){
-      console.log(n)
-    }
+    canEdit() {},
+    loginIcon() {},
   },
 };
 </script>
@@ -189,5 +197,10 @@ export default {
 .group-text {
   padding: auto 1rem;
   font-size: 0.9rem;
+}
+.box-tool {
+  text-align: right;
+  margin-right: 4rem;
+  margin-top: 2rem;
 }
 </style>

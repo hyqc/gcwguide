@@ -2,7 +2,7 @@ import axios from "axios";
 import {CookieGetToken } from "@/api/cookie.js";
 
 const instance = axios.create({
-  baseURL: "/",
+  baseURL: process.env.VUE_APP_API_BASE,
   timeout: 6000,
 });
 

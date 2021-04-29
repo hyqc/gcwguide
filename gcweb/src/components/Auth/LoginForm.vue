@@ -97,7 +97,7 @@ export default {
             let expire = res.data.expire;
             CookieSet(token, expire);
             this.$message.success({
-              message: res.message || "登录成功",
+              message: "登录成功",
               onClose() {
                 _this.emitCloseModel();
               },

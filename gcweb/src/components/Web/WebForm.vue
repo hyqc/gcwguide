@@ -27,28 +27,63 @@
         :label-width="formLabelWidth"
         prop="pic"
       >
-        <el-input class="web-input-width" v-model="formData.pic" autocomplete="on"></el-input>
+        <el-input
+          class="web-input-width"
+          v-model="formData.pic"
+          autocomplete="on"
+        ></el-input>
       </el-form-item>
       <el-form-item label="站点名称" :label-width="formLabelWidth" prop="name">
-        <el-input class="web-input-width" v-model="formData.name" autocomplete="on"></el-input>
+        <el-input
+          class="web-input-width"
+          v-model="formData.name"
+          autocomplete="on"
+        ></el-input>
       </el-form-item>
       <el-form-item label="站点链接" :label-width="formLabelWidth" prop="host">
-        <el-input class="web-input-width" v-model="formData.host" autocomplete="on"></el-input>
+        <el-input
+          class="web-input-width"
+          v-model="formData.host"
+          autocomplete="on"
+        ></el-input>
       </el-form-item>
       <el-form-item label="站点分组" :label-width="formLabelWidth" prop="group">
-        <el-input class="web-input-width" v-if="isEditGroup" v-model="formData.group" autocomplete="on"></el-input>
-        <el-select v-else v-model="formData.group" placeholder="请选择站点分组">
-          <el-option
-            v-for="(item, key) in webGroups"
-            :label="item"
-            :value="item"
-            :key="key"
-          ></el-option>
-        </el-select>
-        <el-button class="edit-group" type="warning" icon="el-icon-edit" @click="editGroup">{{ isEditGroup ? '选择分组' : '编辑分组'}}</el-button>
+        <el-col :span="13">
+          <el-input
+            class="web-input-width web-item-group-add"
+            v-if="isEditGroup"
+            v-model="formData.group"
+            autocomplete="on"
+          ></el-input>
+          <el-select
+            v-else
+            v-model="formData.group"
+            placeholder="请选择站点分组"
+          >
+            <el-option
+              v-for="(item, key) in webGroups"
+              :label="item"
+              :value="item"
+              :key="key"
+            ></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="11">
+          <el-button
+            class="edit-group"
+            type="warning"
+            icon="el-icon-edit"
+            @click="editGroup"
+            >{{ isEditGroup ? "选择分组" : "编辑分组" }}</el-button
+          >
+        </el-col>
       </el-form-item>
       <el-form-item label="站点描述" :label-width="formLabelWidth" prop="desc">
-        <el-input class="web-input-width" v-model="formData.desc" autocomplete="on"></el-input>
+        <el-input
+          class="web-input-width"
+          v-model="formData.desc"
+          autocomplete="on"
+        ></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -61,7 +96,8 @@
 </template>
 
 <script>
-import { WebAdd, WebEdit, WebLogoUploadUrl } from "@/api/website.js";
+import { WebAdd, WebEdit } from "@/api/website.js";
+import { WebLogoUploadUrl } from "@/api/upload.js";
 
 export default {
   name: "WebForm",
@@ -110,7 +146,7 @@ export default {
           { type: "url", message: "不是有效的地址", trigger: "blur" },
         ],
       },
-      isEditGroup: false
+      isEditGroup: false,
     };
   },
   mounted() {
@@ -125,7 +161,7 @@ export default {
     submit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.saveWeb()
+          this.saveWeb();
         } else {
           console.log("error submit!!");
           return false;
@@ -152,14 +188,14 @@ export default {
       }
     },
     closeModel() {
-      this.emitCloseModel({show: false,webItem: this.formData});
+      this.emitCloseModel({ show: false, webItem: this.formData });
     },
     emitCloseModel() {
-      this.$emit("showModel", {show: false,webItem: this.formData});
+      this.$emit("showModel", { show: false, webItem: this.formData });
     },
     saveWeb() {
       const _this = this;
-      const saveWeb = this.formData.id ? WebEdit : WebAdd
+      const saveWeb = this.formData.id ? WebEdit : WebAdd;
       saveWeb(this.formData)
         .then((res) => {
           res = res.data;
@@ -179,9 +215,9 @@ export default {
           this.$message.error("保存失败");
         });
     },
-    editGroup(){
-      this.isEditGroup = !this.isEditGroup
-    }
+    editGroup() {
+      this.isEditGroup = !this.isEditGroup;
+    },
   },
   watch: {
     modeShow(n) {
@@ -202,7 +238,7 @@ export default {
   position: relative;
   overflow: hidden;
 }
-.el-upload--picture-card{
+.el-upload--picture-card {
   width: 80px;
   height: 80px;
   line-height: 80px;
@@ -222,10 +258,14 @@ export default {
   height: 30px;
   display: block;
 }
-.edit-group{
+.edit-group {
   margin-left: 2rem;
 }
-.web-input-width input{
-  max-width: 372px;
+.web-input-width input {
+  max-width: 372px !important;
+}
+.web-item-group-add input {
+  max-width: 222px !important;
+  display: inline-block;
 }
 </style>

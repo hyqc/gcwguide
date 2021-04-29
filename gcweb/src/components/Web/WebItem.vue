@@ -26,7 +26,7 @@
         </div>
 
         <el-dropdown trigger="click" class="web-item-tool" v-if="canEdit">
-          <i class="el-icon-more"></i>
+          <i class="el-icon-more web-item-tool-icon"></i>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item
@@ -52,8 +52,8 @@
       </div>
     </template>
     <div>
-      <p><span>{{ webItem.desc || webItem.name }}</span></p>
-      <p><span>{{ webItem.host }}</span></p>
+      <p><span>描述：{{ webItem.desc || webItem.name }}</span></p>
+      <p><span>地址：{{ webItem.host }}</span></p>
     </div>
   </el-popover>
 </template>
@@ -216,16 +216,18 @@ export default {
   font-size: 12px;
   text-align: center;
   display: block;
+  overflow: hidden;
 }
 .web-item-title {
   position: absolute;
   bottom: 8px;
-  right: 4px;
+  right: 6px;
   text-align: center;
-  width: 98px;
+  width: 94px;
   color: rgb(19, 17, 17);
   font-size: 12px;
   z-index: 999;
+  overflow: hidden;
 }
 .web-item-tool {
   position: absolute !important;
@@ -239,5 +241,8 @@ export default {
 }
 .web-item:hover .web-item-tool {
   display: block;
+}
+.web-item-tool-icon{
+  color: rgb(119, 78, 216);
 }
 </style>
