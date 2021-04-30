@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	conf "gcapi/config"
 	"gcapi/extend/util"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type RequestLoginParams struct {
@@ -77,7 +78,11 @@ func checkAccount(r *RequestLoginParams) bool {
 
 func checkAuth(name, methodType string) bool {
 	members := conf.App.Account.Members
+	admin := conf.App.Account.Admin
 	for _, user := range members {
+		if user.Name == admin {
+			return true
+		}
 		if user.Name == name {
 			auths := strings.Split(user.Rule, ",")
 			for _, auth := range auths {
