@@ -1,7 +1,7 @@
 <template>
   <div class="group-card">
     <el-row :gutter="20">
-      <el-col :xs="8" :sm="6" :md="4" :lg="3" :xl="1" v-for="(webInfo, index) in webList" :key="index">
+      <el-col :xs="8" :sm="6" :md="4" :lg="3" :xl="3" v-for="(webInfo, index) in webList" :key="index">
         <web-item :webInfo="webInfo" :webGroups="webGroups" :canEdit="canEdit" />
       </el-col>
     </el-row>
