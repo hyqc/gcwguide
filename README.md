@@ -1,7 +1,7 @@
 # gcwguide
 
 #### 介绍
-使用与公司内部或个人的简易版网址导航工具
+适用于公司内部或个人的简易版网址导航工具
 
 #### 示例站点：https://nav.jianean.com/
 [demo](https://nav.jianean.com/)
