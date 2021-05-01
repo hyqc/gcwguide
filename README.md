@@ -3,6 +3,8 @@
 #### 介绍
 适用于公司内部或个人的简易版网址导航工具
 
+#### gitee地址：https://gitee.com/hyqc/gcwguide
+
 #### 示例站点：https://nav.jianean.com/
 [demo](https://nav.jianean.com/)
 ###### 操作账号
