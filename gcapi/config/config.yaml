@@ -1,5 +1,5 @@
 server:
-  name: gcapi
+  name: main
   port: 8083
 store:
   drive: file

@@ -1,0 +1,44 @@
+server:
+  name: main
+  port: 8083
+store:
+  drive: file
+  # 存储文件的类型
+  type: json
+  # 存储文件的目录
+  path: store/websites/webs.json
+  # 备份文件的目录，暂不支持
+  backupsDir: store/backups
+  # 最大保留备最近份文件数量，暂不支持
+  backupsMax: 30
+# 静态文件根目录
+static:
+  static: /data/server/web/gcweb/
+  #static: E:/Gitlab-Local/gcwguide/gcweb/public/
+  # 上传文件相对静态文件根目录地址
+  upload:
+    path: static/upload/image/
+    maxsize: 2097152
+    baseUrl: https://nav.jianean.com/
+    #baseUrl: http://localhost:8080/
+account:
+  cookieExpireSeconds: 7200
+  secert: gcweb
+  admin: admin
+  members:
+    - name: admin
+      rule: add,edit,delete
+      password: 123456
+    - name: save
+      rule: add,edit
+      password: 123456
+    - name: add
+      rule: add
+      password: 123456
+    - name: edit
+      rule: edit
+      password: 123456
+    - name: delete
+      rule: delete
+      password: 123456
+
