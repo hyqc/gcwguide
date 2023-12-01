@@ -68,19 +68,17 @@ WantedBy=multi-user.target
    1. 示例配置：
 ```
 server {
-    listen       80;
-    server_name  nav.jianean.com;
+    listen       10000;
+    server_name  127.0.0.1;
 
-    #charset koi8-r;
-    access_log  /var/log/nginx/nav.jianean.com.access.log  main;
-    error_log   /var/log/nginx/nav.jianean.com.error.log;
-    error_page   500 502 503 504  /50x.html;
-	
-    gzip            on;
-    gzip_types      text/plain application/xml text/css application/javascript;
-    gzip_min_length 1000;
+    index index.html;    
+    root /data/tool/navweb/dist;
 
     location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
         #expires $expires;
         proxy_redirect                      off;
         proxy_set_header Host               $host;
@@ -89,7 +87,7 @@ server {
         proxy_set_header X-Forwarded-Proto  $scheme;
         proxy_read_timeout          1m;
         proxy_connect_timeout       1m;
-        proxy_pass http://127.0.0.1:xxxx; # gcapi中的config/config.yaml的port端口号
+        proxy_pass http://127.0.0.1:6666/;
     }
 }
 
